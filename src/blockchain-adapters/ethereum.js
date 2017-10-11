@@ -5,6 +5,16 @@ class Ethereum {
     this.zValue = zValue
   }
 
+  getBlock (blockNumber, callback) {
+    // Dummy data for now
+    setTimeout(() => callback(null, [{a: 1}, {b: 2}]), 10000)
+  }
+
+  getCurrentBlockNumber (callback) {
+    // Dummy data for now
+    setTimeout(() => callback(null, 421321), 10000)
+  }
+
   getBalance (walletAddress, callback) {
     // Dummy data for now
     setTimeout(() => callback(null, 10), 4000)
