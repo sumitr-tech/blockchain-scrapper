@@ -1,4 +1,10 @@
-import config from '../scrapper-config'
+import scrapperConfig from '../scrapper-config'
 import { parseConfig } from './parser'
+import runDaemonServices from './services'
 
-parseConfig(config)
+const app = () => {
+  const scrapperData = parseConfig(scrapperConfig)
+  scrapperData.forEach(data => runDaemonServices(data))
+}
+
+app()
