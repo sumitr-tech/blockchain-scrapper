@@ -11,6 +11,7 @@ export const parseConfig = (config) => {
     const adapter = getBlockchainAdopter(config)
     return {
       blockchain: config.blockchain,
+      initialBlock: config.initialBlock,
       adapter
     }
   })
