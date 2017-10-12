@@ -21,6 +21,9 @@
   "dependencies": {
     "bip39": "^2.4.0",
     "bitcoinjs-lib": "^3.2.0",
-    "ethereumjs-util": "^5.1.2"
+    "convict": "^4.0.1",
+    "crypto": "^1.0.1",
+    "ethereumjs-util": "^5.1.2",
+    "mongoose": "^4.12.1"
   }
 }
