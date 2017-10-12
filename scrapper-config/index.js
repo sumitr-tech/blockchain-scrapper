@@ -1,8 +1,4 @@
-import {
-  EthereumBlockchain,
-  BitcoinBlockchain,
-  TokenEthereumBlockchain
-} from '../src/constants'
+import { EthereumBlockchain } from '../src/constants'
 
 const scrapperConfig = [
   {

@@ -8,18 +8,19 @@ import {
 
 export const parseConfig = (config, callback) => {
   const adapter = getBlockchainAdopter(config)
-  console.log("Accounts Creation Started...")
-  const accounts = getAccountsForMnemonics(config, (error, accounts) => {
+  console.log('Accounts Creation Started...')
+
+  getAccountsForMnemonics(config, (error, accounts) => {
     if (error) {
-      console.log("Got Error In Accounts Creation: ", error)
+      console.log('Got Error In Accounts Creation: ', error)
     } else {
-      console.log("Accounts Created...")
+      console.log('Accounts Created...')
     }
 
     callback(error, {
       blockchain: config.blockchain,
       initialBlock: config.initialBlock,
-      accounts: accounts,
+      accounts,
       adapter
     })
   })
