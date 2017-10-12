@@ -17,5 +17,10 @@
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
     "standard": "^10.0.3"
+  },
+  "dependencies": {
+    "bip39": "^2.4.0",
+    "bitcoinjs-lib": "^3.2.0",
+    "ethereumjs-util": "^5.1.2"
   }
 }
