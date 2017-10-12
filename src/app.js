@@ -3,8 +3,13 @@ import { parseConfig } from './parser'
 import runDaemonServices from './services'
 
 const app = () => {
-  const scrapperData = parseConfig(scrapperConfig)
-  scrapperData.forEach(data => runDaemonServices(data))
+  scrapperConfig.map(config => parseConfig(config, (error, data) => {
+    if (error) {
+      console.log("Error In Parsing Data...", error)
+    } else {
+      runDaemonServices(data)
+    }
+  }))
 }
 
 app()

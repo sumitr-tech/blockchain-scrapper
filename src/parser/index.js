@@ -1,19 +1,27 @@
+import Adapter from '../blockchain-adapters'
+import { getAccountsForMnemonics } from '../mnemonics'
 import {
   EthereumBlockchain,
   BitcoinBlockchain,
   TokenEthereumBlockchain
 } from '../constants'
 
-import Adapter from '../blockchain-adapters'
+export const parseConfig = (config, callback) => {
+  const adapter = getBlockchainAdopter(config)
+  console.log("Accounts Creation Started...")
+  const accounts = getAccountsForMnemonics(config, (error, accounts) => {
+    if (error) {
+      console.log("Got Error In Accounts Creation: ", error)
+    } else {
+      console.log("Accounts Created...")
+    }
 
-export const parseConfig = (config) => {
-  return config.map(config => {
-    const adapter = getBlockchainAdopter(config)
-    return {
+    callback(error, {
       blockchain: config.blockchain,
       initialBlock: config.initialBlock,
+      accounts: accounts,
       adapter
-    }
+    })
   })
 }
 
