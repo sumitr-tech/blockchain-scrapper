@@ -7,7 +7,8 @@ const Schema = mongoose.Schema
 const AccountSchema = new Schema({
   walletAddress: {
     type: String,
-    required: true
+    required: true,
+    set: (text) => text.toLowerCase()
   },
   type: {
     type: String,
