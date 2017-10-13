@@ -1,7 +1,8 @@
 class CurrentBlockScrapper {
-  constructor (adapter, timeInterval) {
+  constructor (adapter, mnemonicId, timeInterval) {
     this.adapter = adapter
     this.timeInterval = timeInterval
+    this.mnemonicId = mnemonicId
     this.startBlock = null
     this.currentBlock = null
     this.pause = false
@@ -21,7 +22,12 @@ class CurrentBlockScrapper {
       if (error) {
         console.log('Error in getting Current Block Number: ', error)
       }
+
+      console.log("Current Block Scrapper will start from Block: ", result)
+
       this.startBlock = result
+      this.currentBlock = this.startBlock
+
       callback(error, result)
     })
   }
@@ -41,16 +47,24 @@ class CurrentBlockScrapper {
   runlopper () {
     this.timer = setInterval(() => {
       if (!this.pause) {
-        this.adapter.getBlock(this.currentBlock, (error, result) => {
+        this.adapter.getBlockTxs(this.currentBlock, (error, transactions) => {
           if (error) {
             console.log('Got error in Get block: ', error)
+          } else {
+            if (transactions) {
+              console.log('Got Block Transactions: ', transactions.length)
+              this.currentBlock += 1
+            }
           }
-
-          this.currentBlock += 1
         })
       }
     }, this.timeInterval)
   }
+
+  
+
+
+
 }
 
 export default CurrentBlockScrapper
