@@ -5,36 +5,68 @@ import {
   TokenEthereumBlockchain
 } from '../constants'
 import ethUtil from 'ethereumjs-util'
+import Mnemonic from '../models/mnemonic'
+import Account from '../models/account'
 
 export const getAccountsForMnemonics = (config, callback) => {
-  const { mnemonic, passphrase, path, lastIndex, blockchain } = config
-
-  const bip32RootKey = getBip32RootKeyFromSeed(mnemonic, passphrase, path, lastIndex, blockchain)
-  const bip32extendedKey = getBip32ExtendedKey(bip32RootKey, path)
-
-  getAllAccounts(bip32extendedKey, path, lastIndex, blockchain, callback)
+  createMnemonicDBAccount(config.mnemonicCustomName, (error, mnemonic) => {
+    if (!error) {
+      createAccounts(config, mnemonic._id, callback)
+    }
+  })
 }
 
-const getAllAccounts = (bip32extendedKey, path, lastIndex, blockchain, callback) => {
+const createMnemonicDBAccount = (mnemonicCustomName, callback) => {
+  const mnemonic = new Mnemonic({
+    name: mnemonicCustomName
+  })
+  mnemonic.save((error) => callback(error, mnemonic))
+}
+
+const createAccounts = (config, mnemonicId, callback) => {
+  const { mnemonic, passphrase, path, lastIndex, blockchain } = config
+  const bip32RootKey = getBip32RootKeyFromSeed(mnemonic, passphrase)
+  const bip32extendedKey = getBip32ExtendedKey(bip32RootKey, path)
+
+  createAllAccounts(bip32extendedKey, path, lastIndex, blockchain, mnemonicId, callback)
+}
+
+const createAllAccounts = (bip32extendedKey, path, lastIndex, blockchain, mnemonicId, callback) => {
   let accounts = []
 
   let i = 0
   let count = 0
 
-  for (i = 0; i < lastIndex; i++) {
+  for (i = 0; i <= lastIndex; i++) {
     getAccountForIndex(bip32extendedKey, path, i, blockchain, (error, account) => {
-      count += 1
       if (!error) {
-        accounts.push(account)
+        createDBAccount(account, blockchain, mnemonicId)
       }
       if (count === lastIndex) {
         callback(null, accounts)
       }
+      count += 1
     })
   }
 }
 
-const getBip32RootKeyFromSeed = (phrase, passphrase, path, lastIndex, blockchain) => {
+const createDBAccount = (account, blockchain, mnemonicId) => {
+  const dbAccount = new Account({
+    walletAddress: account.address,
+    type: blockchain === EthereumBlockchain || blockchain === TokenEthereumBlockchain ? 'ETH' : 'BTC',
+    privateKeyEncrypted: account.privkey,
+    publicKey: account.pubkey,
+    mnemonicPath: account.index,
+    mnemonicRef: mnemonicId
+  })
+  dbAccount.save((error) => {
+    if (error) {
+      console.error(`Error in creation of Account for MnemonicId: ${mnemonicId} index: ${account.index}`)
+    }
+  })
+}
+
+const getBip32RootKeyFromSeed = (phrase, passphrase) => {
   const seed = bip39.mnemonicToSeed(phrase, passphrase)
   const bip32RootKey = HDNode.fromSeedHex(seed, networks.bitcoin)
   return bip32RootKey
