@@ -30,9 +30,9 @@ const getBlockchainAdopter = (config) => {
   const { blockchain, zValue, toAddress, clientNode, contractAddress } = config
 
   switch (blockchain) {
-    case EthereumBlockchain:
-      return new Adapter.Bitcoin(toAddress, clientNode, zValue)
     case BitcoinBlockchain:
+      return new Adapter.Bitcoin(toAddress, clientNode, zValue)
+    case EthereumBlockchain:
       return new Adapter.Ethereum(toAddress, clientNode, zValue)
     case TokenEthereumBlockchain:
       return new Adapter.TokenETH(toAddress, clientNode, zValue, contractAddress)
