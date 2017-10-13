@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import config from '../app-config'
 
+mongoose.Promise = global.Promise
 const db = mongoose.createConnection(config.get('db_url'))
 
 export const connectToDb = (callback) => {

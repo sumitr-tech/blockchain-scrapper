@@ -1,5 +1,8 @@
 import setProvider from '../services/web3'
 import Tx from 'ethereumjs-tx'
+import _ from 'lodash'
+import { saveTransaction } from '../controller/transaction-controller'
+import BigNumber from 'bignumber.js'
 
 class Ethereum {
   constructor (toAddress, clientNode, zValue) {
@@ -26,14 +29,18 @@ class Ethereum {
   getBalance (walletAddress, callback) {
     this.web3.eth.getBalance(walletAddress, callback)
   }
-
+  //  Send value in ether
   transferAmount (fromAccount, privatekey, value, callback) {
-    // Need to move private key and gas limit
     let privateKey = new Buffer(privatekey, 'hex')
+    let estimateEthersForGas = this.getEstimateEthersForGas()
+    value = this.web3.fromWei(value, 'ether')
+    value = new BigNumber(value).minus(estimateEthersForGas)
+
     let rawTx = {
+      from: fromAccount,
       nonce: this.getNonce(fromAccount),
       gasPrice: this.web3.toHex(this.web3.eth.gasPrice),
-      gasLimit: this.web3.toHex(3000000),
+      gasLimit: this.web3.toHex(this.web3.eth.estimateGas({ to: this.toAddress })),
       to: this.toAddress,
       value: this.web3.toHex(this.web3.toWei(value, 'ether'))
     }
@@ -53,8 +60,45 @@ class Ethereum {
 
   checkStatusOfTransaction (txHash, callback) {
     this.web3.eth.getTransactionReceipt(txHash, (error, receipt) => {
-      callback(error, receipt === null ? 'Pending' : 'Success')
+      callback(error, receipt === null ? 'Pending' : 'Completed')
     })
+  }
+
+  sendFundsFromAccount (accounts) {
+    let ethereumObj = this
+    // Account.find({mnemonicRef: "59e0a892541162701cd03953"}, (err, accounts) => {
+    _.forEach(accounts, (account) => {
+      ethereumObj.getBalance(account.walletAddress, (error, balance) => {
+        if (error || !(balance > 0)) {
+
+        } else {
+          ethereumObj.transferAmount(account.walletAddress, account.privateKeyEncrypted.substr(2), balance, (error, txHash) => {
+            if (error) {
+              console.log('Error in Transfer Amount: ', error)
+            } else {
+              saveTransaction(account, ethereumObj.getTransaction(txHash), (error, tx) => {
+                if (error) {
+                  console.log('Error in Transaction saving: ', error)
+                } else {
+                  console.log('Transaction saved')
+                }
+              })
+            }
+          })
+        }
+      })
+    })
+    // })
+  }
+
+  getTransaction (txHash) {
+    return this.web3.eth.getTransaction(txHash)
+  }
+
+  getEstimateEthersForGas () {
+    const gasPrice = this.web3.fromWei(this.web3.eth.gasPrice, 'ether')
+    const estimateGas = this.web3.eth.estimateGas({ to: this.toAddress })
+    return gasPrice.times(estimateGas)
   }
 }
 
