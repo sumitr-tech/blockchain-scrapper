@@ -24,7 +24,6 @@ export const createDBAccount = (account, blockchain, mnemonicId) => {
 
 export const getAccountsWhichReceivedFunds = (transactions, mnemonicId, callback) => {
   setImmediate(() => {
-
     const receiverAddresses = transactions.map(transaction => transaction.to)
 
     Account.find({
@@ -32,11 +31,44 @@ export const getAccountsWhichReceivedFunds = (transactions, mnemonicId, callback
       walletAddress: {$in: receiverAddresses}
     })
     .exec((error, accounts) => {
-      //make magic happen
+      // make magic happen
       if (error) {
         console.log('Got Error in Querying Accounts: ', error)
       }
       callback(error, accounts)
+    })
+  })
+}
+
+export const getListOfTransactionForMnemonic = (transactions, adapter, mnemonicId, callback) => {
+  setImmediate(() => {
+    const receiverAddresses = transactions.map(transaction => adapter.getReceiverAddressFromTransaction(transaction))
+
+    const getTransactionForWalletAddresses = (addresses) => {
+      const walletTransactions = transactions.filter(transaction => {
+        return addresses.find(address => {
+          return address.walletAddress === adapter.getReceiverAddressFromTransaction(transaction)
+        })
+      })
+      callback(null, walletTransactions)
+    }
+
+    Account.find({
+      mnemonicRef: mnemonicId,
+      walletAddress: {$in: receiverAddresses}
+    })
+    .select({ walletAddress: 1 })
+    .exec((error, accounts) => {
+      if (error) {
+        console.log('Got Error in Querying Accounts: ', error)
+        callback(error, [])
+      }
+
+      if (accounts.length > 0) {
+        getTransactionForWalletAddresses(accounts)
+      } else {
+        callback(error, [])
+      }
     })
   })
 }
