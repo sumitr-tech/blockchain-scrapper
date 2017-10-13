@@ -11,6 +11,11 @@ class TokenETH {
     setTimeout(() => callback(null, [{e: 1}, {f: 2}]), 10000)
   }
 
+  getBlockTxs (blockNumber, callback) {
+    // Dummy data for now
+    setTimeout(() => callback(null, [{c: 1}, {d: 2}]), 10000)
+  }
+
   getCurrentBlockNumber (callback) {
     // Dummy data for now
     setTimeout(() => callback(null, 421321), 10000)

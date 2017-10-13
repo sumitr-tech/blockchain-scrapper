@@ -25,8 +25,6 @@ const createAccounts = (config, mnemonicId, callback) => {
 }
 
 const createAllAccounts = (bip32extendedKey, path, lastIndex, blockchain, mnemonicId, callback) => {
-  let accounts = []
-
   let i = 0
   let count = 0
 
@@ -36,7 +34,7 @@ const createAllAccounts = (bip32extendedKey, path, lastIndex, blockchain, mnemon
         createDBAccount(account, blockchain, mnemonicId)
       }
       if (count === lastIndex) {
-        callback(null, accounts)
+        callback(null, mnemonicId)
       }
       count += 1
     })
