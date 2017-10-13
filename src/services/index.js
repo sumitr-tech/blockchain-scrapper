@@ -12,7 +12,7 @@ const runCurrentBlockScrapper = (scrapper, callback) => {
 const runPreviousBlockScrapper = (scrapper, lastBlock) => {
   console.log('Starting Previous Block Scrapper...')
 
-  const previousBlockScrapper = new PreviousBlockScrapper(scrapper.adapter, scrapper.initialBlock, lastBlock, 2000)
+  const previousBlockScrapper = new PreviousBlockScrapper(scrapper.adapter, scrapper.mnemonicId, scrapper.initialBlock, lastBlock)
   previousBlockScrapper.start()
 }
 

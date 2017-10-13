@@ -1,15 +1,18 @@
+import { getListOfTransactionForMnemonic } from '../controller/account-controller'
+import { createMultipleTransactionsInDB } from '../controller/transaction-controller'
+
 class PreviousBlockScrapper {
-  constructor (adapter, initialBlock, lastBlock, timeInterval) {
+  constructor (adapter, mnemonicId, initialBlock, lastBlock) {
     this.adapter = adapter
-    this.timeInterval = timeInterval
     this.startBlock = initialBlock
     this.lastBlock = lastBlock
-    this.currentBlock = null
+    this.currentBlock = this.startBlock
+    this.mnemonicId = mnemonicId
     this.pause = false
   }
 
   start () {
-    this.runlopper()
+    this.runLopper(this.startBlock)
   }
 
   stop () {
@@ -24,18 +27,28 @@ class PreviousBlockScrapper {
     this.pause = true
   }
 
-  runlopper () {
-    this.timer = setInterval(() => {
-      if (!this.pause) {
-        this.adapter.getBlock(this.currentBlock, (error, result) => {
-          if (error) {
-            console.log('Got error in Get block: ', error)
-          }
+  runLopper (blockNumber) {
+    if (blockNumber === this.lastBlock) {
+      console.log('Previous Block Scrapper has completed scrapping...')
+      return
+    }
 
-          this.currentBlock += 1
-        })
+    this.adapter.getBlockTxs(blockNumber, (error, transactions) => {
+      if (error) {
+        console.log('Got error in Get block: ', error)
+      } else {
+        if (transactions) {
+          getListOfTransactionForMnemonic(transactions, this.adapter, this.mnemonicId, (error, walletTransactions) => {
+            if (!error) {
+              if (walletTransactions.length > 0) {
+                createMultipleTransactionsInDB(walletTransactions, this.adapter)
+              }
+            }
+          })
+          this.runLopper(blockNumber + 1)
+        }
       }
-    }, this.timeInterval)
+    })
   }
 }
 
