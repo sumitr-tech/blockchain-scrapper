@@ -1,3 +1,6 @@
+import { getAccountsWhichReceivedFunds } from '../controller/account-controller'
+import { updateTransactionsStatus } from '../controller/transaction-controller'
+
 class CurrentBlockScrapper {
   constructor (adapter, mnemonicId, timeInterval) {
     this.adapter = adapter
@@ -23,7 +26,7 @@ class CurrentBlockScrapper {
         console.log('Error in getting Current Block Number: ', error)
       }
 
-      console.log("Current Block Scrapper will start from Block: ", result)
+      console.log('Current Block Scrapper will start from Block: ', result)
 
       this.startBlock = result
       this.currentBlock = this.startBlock
@@ -53,6 +56,8 @@ class CurrentBlockScrapper {
           } else {
             if (transactions) {
               console.log('Got Block Transactions: ', transactions.length)
+              this.transferFunds(transactions)
+              this.updateTransactions(transactions, this.currentBlock)
               this.currentBlock += 1
             }
           }
@@ -61,10 +66,17 @@ class CurrentBlockScrapper {
     }, this.timeInterval)
   }
 
-  
+  transferFunds (transactions) {
+    getAccountsWhichReceivedFunds(transactions, this.adapter, this.mnemonicId, (error, accounts) => {
+      if (!error) {
 
+      }
+    })
+  }
 
-
+  updateTransactions (transactions, blockNumber) {
+    updateTransactionsStatus(transactions, this.adapter, blockNumber)
+  }
 }
 
 export default CurrentBlockScrapper

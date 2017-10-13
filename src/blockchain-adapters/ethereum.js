@@ -69,6 +69,10 @@ class Ethereum {
     return transaction.value
   }
 
+  getTransactionHash (transaction) {
+    return transaction.hash
+  }
+
   getTransactionObject (transaction) {
     return {
       senderAddress: transaction.from,
