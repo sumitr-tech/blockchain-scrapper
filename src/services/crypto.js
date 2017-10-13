@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import config from '../../config/config'
+import config from '../../app-config'
 
 export function encrypt (text) {
   const cipher = crypto.createCipher('aes-256-cbc', config.get('private_key_encryption_secret'))
