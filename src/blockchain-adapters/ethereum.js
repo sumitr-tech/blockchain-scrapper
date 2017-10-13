@@ -56,6 +56,30 @@ class Ethereum {
       callback(error, receipt === null ? 'Pending' : 'Success')
     })
   }
+
+  getReceiverAddressFromTransaction (transaction) {
+    return transaction.to
+  }
+
+  getSenderAddressFromTransaction (transaction) {
+    return transaction.from
+  }
+
+  getValueFromTransaction (transaction) {
+    return transaction.value
+  }
+
+  getTransactionObject (transaction) {
+    return {
+      senderAddress: transaction.from,
+      receiverAddress: transaction.to,
+      type: 'ETH',
+      status: 'Completed',
+      amount: transaction.value,
+      blockNumber: transaction.blockNumber,
+      transactionHash: transaction.hash
+    }
+  }
 }
 
 export default Ethereum
