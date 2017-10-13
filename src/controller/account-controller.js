@@ -22,6 +22,22 @@ export const createDBAccount = (account, blockchain, mnemonicId) => {
   })
 }
 
+export const getAllAccounts = (mnemonicId, callback) => {
+  Account.find({
+    mnemonicRef: mnemonicId,
+  }).exec((error, accounts) => {
+    if (error) {
+      console.log('Got Error in Querying Accounts: ', error)
+      callback(error, [])
+    }
+    if (accounts.length > 0) {
+      callback(error, accounts)
+    } else {
+      callback(error, [])
+    }
+  })
+}
+
 export const getListOfTransactionForMnemonic = (transactions, adapter, mnemonicId, callback) => {
   setImmediate(() => {
     const receiverAddresses = transactions.map(transaction => adapter.getReceiverAddressFromTransaction(transaction))

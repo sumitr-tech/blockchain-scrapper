@@ -17,11 +17,9 @@ const runPreviousBlockScrapper = (scrapper, lastBlock) => {
 }
 
 const runInitialTransfer = (scrapper) => {
-  // Dummy data for now
   console.log('Starting Initial Transfer Module...')
 
-  const listOfAccounts = []
-  const initialTransfer = new InitialTransfer(scrapper.adapter, listOfAccounts)
+  const initialTransfer = new InitialTransfer(scrapper.adapter, scrapper.mnemonicId)
   initialTransfer.startTranfer()
 }
 

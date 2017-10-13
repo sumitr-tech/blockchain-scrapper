@@ -69,7 +69,9 @@ class CurrentBlockScrapper {
   transferFunds (transactions) {
     getAccountsWhichReceivedFunds(transactions, this.adapter, this.mnemonicId, (error, accounts) => {
       if (!error) {
-
+        if (accounts.length > 0) {
+          this.adapter.sendFundsFromAccounts(accounts)
+        }
       }
     })
   }
