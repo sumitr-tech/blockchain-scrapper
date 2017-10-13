@@ -1,25 +1,18 @@
-import {
-  EthereumBlockchain,
-  BitcoinBlockchain
-} from '../src/constants'
+import { EthereumBlockchain } from '../src/constants'
 
-const config = [
+const scrapperConfig = [
   {
-    mnemonic: 'test test test test',
-    path: 'm/0/0/0',
-    lastIndex: 10000,
+    mnemonicCustomName: 'Mnemonic1',
+    mnemonic: 'recall that despair search riot curve sail empower north furnace scheme frame sweet dizzy hockey',
+    passphrase: 'test',
+    path: `m/44'/60'/0'/0`,
+    lastIndex: 10,
     initialBlock: 1847000,
     zValue: 10,
-    blockchain: EthereumBlockchain
-  },
-  {
-    mnemonic: 'test test test test',
-    path: 'm/0/0/0',
-    lastIndex: 10000,
-    initialBlock: 1847000,
-    zValue: 10,
-    blockchain: BitcoinBlockchain
+    blockchain: EthereumBlockchain,
+    toAddress: '0xA',
+    clientNode: 'http://clientnode'
   }
 ]
 
-export default config
+export default scrapperConfig
