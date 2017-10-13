@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import db from '../mongoose'
+import BigNumber from 'bignumber.js'
 
 const Schema = mongoose.Schema
 
@@ -24,16 +25,24 @@ const TransactionSchema = new Schema({
   },
   amount: {
     type: String,
-    required: true
+    required: true,
+    validate: {
+      validator: (val) => {
+        if (isNaN(val)) { return false }
+        if (new BigNumber(val).isNegative()) { return false }
+        return new BigNumber(val).modulo(1).isZero()
+      }
+    },
+    get: amount => new BigNumber(amount)
   },
-  txTime: {
+  transactionTime: {
     type: Date,
     default: Date.now
   },
   blockNumber: {
     type: Number
   },
-  txHash: {
+  transactionHash: {
     type: String
   }
 })
