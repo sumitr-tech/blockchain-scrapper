@@ -15,7 +15,7 @@ class Ethereum {
 
   getBlockTxs (blockNumber, callback) {
     this.web3.eth.getBlock(blockNumber, true, (error, block) => {
-      callback(error, block.transactions)
+      callback(error, block ? block.transactions : null)
     })
   }
 
