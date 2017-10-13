@@ -3,8 +3,15 @@ import config from '../app-config'
 
 const db = mongoose.createConnection(config.get('db_url'))
 
-db.once('open', function callback () {
-  console.log('db connection open')
-})
+export const connectToDb = (callback) => {
+  db.once('open', (error) => {
+    if(error) {
+      console.log('Error in DB Connection', error)
+    } else {
+      console.log('Connected to DB')
+    }
+    callback(error)
+  })
+}
 
 export default db

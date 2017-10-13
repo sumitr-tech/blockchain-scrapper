@@ -1,5 +1,6 @@
 import scrapperConfig from '../scrapper-config'
 import { parseConfig } from './parser'
+import { connectToDb } from './mongoose'
 import runDaemonServices from './services'
 
 const app = () => {
@@ -12,4 +13,8 @@ const app = () => {
   }))
 }
 
-app()
+connectToDb((error) => {
+  if (!error) {
+    app()
+  }
+})
