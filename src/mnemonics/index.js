@@ -5,8 +5,8 @@ import {
   TokenEthereumBlockchain
 } from '../constants'
 import ethUtil from 'ethereumjs-util'
-import Mnemonic from '../models/mnemonic'
-import Account from '../models/account'
+import { createDBAccount } from '../controller/account-controller'
+import { createMnemonicDBAccount } from '../controller/mnemonic-controller'
 
 export const getAccountsForMnemonics = (config, callback) => {
   createMnemonicDBAccount(config.mnemonicCustomName, (error, mnemonic) => {
@@ -14,13 +14,6 @@ export const getAccountsForMnemonics = (config, callback) => {
       createAccounts(config, mnemonic._id, callback)
     }
   })
-}
-
-const createMnemonicDBAccount = (mnemonicCustomName, callback) => {
-  const mnemonic = new Mnemonic({
-    name: mnemonicCustomName
-  })
-  mnemonic.save((error) => callback(error, mnemonic))
 }
 
 const createAccounts = (config, mnemonicId, callback) => {
@@ -48,22 +41,6 @@ const createAllAccounts = (bip32extendedKey, path, lastIndex, blockchain, mnemon
       count += 1
     })
   }
-}
-
-const createDBAccount = (account, blockchain, mnemonicId) => {
-  const dbAccount = new Account({
-    walletAddress: account.address,
-    type: blockchain === EthereumBlockchain || blockchain === TokenEthereumBlockchain ? 'ETH' : 'BTC',
-    privateKeyEncrypted: account.privkey,
-    publicKey: account.pubkey,
-    mnemonicPath: account.index,
-    mnemonicRef: mnemonicId
-  })
-  dbAccount.save((error) => {
-    if (error) {
-      console.error(`Error in creation of Account for MnemonicId: ${mnemonicId} index: ${account.index}`)
-    }
-  })
 }
 
 const getBip32RootKeyFromSeed = (phrase, passphrase) => {
