@@ -55,6 +55,7 @@ class CurrentBlockScrapper {
             console.log('Got error in Get block: ', error)
           } else {
             if (transactions) {
+              console.log('Got Block Number: ', this.currentBlock)
               console.log('Got Block Transactions: ', transactions.length)
               this.transferFunds(transactions)
               this.updateTransactions(transactions, this.currentBlock)
@@ -69,6 +70,7 @@ class CurrentBlockScrapper {
   transferFunds (transactions) {
     getAccountsWhichReceivedFunds(transactions, this.adapter, this.mnemonicId, (error, accounts) => {
       if (!error) {
+        console.log('Got accounts which received funds: ', accounts.length)
         if (accounts.length > 0) {
           this.adapter.sendFundsFromAccounts(accounts)
         }

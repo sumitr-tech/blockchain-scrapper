@@ -23,17 +23,15 @@ export const createDBAccount = (account, blockchain, mnemonicId) => {
 }
 
 export const getAllAccounts = (mnemonicId, callback) => {
+  console.log('Mnemonic :', mnemonicId)
   Account.find({
-    mnemonicRef: mnemonicId,
+    mnemonicRef: mnemonicId
   }).exec((error, accounts) => {
     if (error) {
       console.log('Got Error in Querying Accounts: ', error)
       callback(error, [])
-    }
-    if (accounts.length > 0) {
-      callback(error, accounts)
     } else {
-      callback(error, [])
+      callback(error, accounts)
     }
   })
 }

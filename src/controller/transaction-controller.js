@@ -21,7 +21,14 @@ export const updateTransactionsStatus = (transactions, adapter, blockNumber) => 
   const transactionHashes = transactions.map(transaction => adapter.getTransactionHash(transaction))
 
   Transaction.find({
-    transactionHash: {$in: transactionHashes}
+    $or: [
+      {
+        transactionHash: { $in: transactionHashes }
+      },
+      {
+        status: 'Pending'
+      }
+    ]
   }).exec((error, txs) => {
     if (error) {
       console.log('Got Error in Querying Transactions: ', error)
@@ -43,18 +50,4 @@ export const updateTransactionsStatus = (transactions, adapter, blockNumber) => 
       })
     }
   })
-// =======
-//
-// export const saveTransaction = (account, transaction, callback) => {
-//   const tx = new Transaction({
-//     senderAddress: account.walletAddress,
-//     receiverAddress: transaction.to,
-//     status: transaction.blockNumber === null ? 'Pending' : 'Completed',
-//     type: account.type,
-//     amount: transaction.value,
-//     blockNumber: transaction.blockNumber,
-//     txHash: transaction.hash
-//   })
-//   tx.save((error) => callback(error, tx))
-// >>>>>>> send funds from account
 }

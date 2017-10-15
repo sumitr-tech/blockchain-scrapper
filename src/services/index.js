@@ -5,7 +5,7 @@ import InitialTransfer from './initial-transfer'
 const runCurrentBlockScrapper = (scrapper, callback) => {
   console.log('Starting Current Block Scrapper...')
 
-  const currentBlockScrapper = new CurrentBlockScrapper(scrapper.adapter, scrapper.mnemonicId, 20000)
+  const currentBlockScrapper = new CurrentBlockScrapper(scrapper.adapter, scrapper.mnemonicId, 5000)
   currentBlockScrapper.start(callback)
 }
 

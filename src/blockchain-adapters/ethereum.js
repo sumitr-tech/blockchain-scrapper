@@ -36,7 +36,7 @@ class Ethereum {
     value = this.web3.fromWei(value, 'ether')
     value = new BigNumber(value).minus(estimateEthersForGas)
 
-    let rawTx = {
+    const rawTx = {
       from: fromAccount,
       nonce: this.getNonce(fromAccount),
       gasPrice: this.web3.toHex(this.web3.eth.gasPrice),
@@ -45,10 +45,10 @@ class Ethereum {
       value: this.web3.toHex(this.web3.toWei(value, 'ether'))
     }
 
-    let tx = new Tx(rawTx)
+    const tx = new Tx(rawTx)
     tx.sign(privateKey)
 
-    let serializedTx = tx.serialize()
+    const serializedTx = tx.serialize()
     // Return Tx Hash on succes
     this.web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), callback)
   }
@@ -67,21 +67,26 @@ class Ethereum {
   sendFundsFromAccounts (accounts) {
     const self = this
     _.forEach(accounts, (account) => {
+      console.log('Running transfer for account: ', account.walletAddress)
       self.getBalance(account.walletAddress, (error, balance) => {
-        if (error || !(balance > 0)) {
-
+        if (error) {
+          console.log('Error in Getting Balance: ', error)
         } else {
-          self.transferAmount(account.walletAddress, account.privateKeyEncrypted.substr(2), balance, (error, txHash) => {
-            if (error) {
-              console.log('Error in Transfer Amount: ', error)
-            } else {
-              createTransactionInDB(self.getTransactionObject(self.getTransaction(txHash)), (error, tx) => {
-                if (error) {
-                  console.log('Error in Transaction saving: ', error)
-                }
-              })
-            }
-          })
+          if (balance > 0) {
+            self.transferAmount(account.walletAddress, account.privateKeyEncrypted.substr(2), balance, (error, txHash) => {
+              if (error) {
+                console.log('Error in Transfer Amount: ', error)
+              } else {
+                console.log('Transfer Done...')
+                console.log(self.getTransactionObject(self.getTransaction(txHash)))
+                createTransactionInDB(self.getTransactionObject(self.getTransaction(txHash)), (error, tx) => {
+                  if (error) {
+                    console.log('Error in Transaction saving: ', error)
+                  }
+                })
+              }
+            })
+          }
         }
       })
     })
@@ -118,7 +123,7 @@ class Ethereum {
       senderAddress: transaction.from,
       receiverAddress: transaction.to,
       type: 'ETH',
-      status: transaction.blockNumber ? 'Pending' : 'Completed',
+      status: transaction.blockNumber ? 'Completed' : 'Pending',
       amount: transaction.value,
       blockNumber: transaction.blockNumber,
       transactionHash: transaction.hash
