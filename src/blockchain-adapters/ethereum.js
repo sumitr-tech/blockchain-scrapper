@@ -12,6 +12,18 @@ class Ethereum {
     this.web3 = setProvider(clientNode)
   }
 
+  getBlockTrace(blockNumber) {
+    this.web3.currentProvider.sendAsync({
+      method: "debug_traceBlockByNumber",
+      params: [blockNumber],
+      jsonrpc: "2.0",
+      id: "2"
+    }, function (err, result) {
+      console.log('Error: ', err)
+      console.log('Result: ', result);
+    });
+  }
+
   getBlock (blockNumber, callback) {
     this.web3.eth.getBlock(blockNumber, callback)
   }
