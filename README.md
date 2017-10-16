@@ -38,3 +38,7 @@ This configuration is file is used by the scrapper to create account, transfer f
 ```
 
 Here, mnemonic is provided by the env variable. Since we are not storing the mnemonic is db, so we are taking a custom name for it, which can be used in later stages to easily identify the accounts.
+
+## Things Remaining
+* Bitcoin adapter for getting block transaction and sending funds
+* Internal transaction for ethereum
