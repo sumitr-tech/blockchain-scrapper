@@ -27,7 +27,7 @@ export const parseConfig = (config, callback) => {
 }
 
 const getBlockchainAdopter = (config) => {
-  const { blockchain, zValue, toAddress, clientNode, contractAddress } = config
+  const { blockchain, zValue, toAddress, clientNode, contractAddress, abi } = config
 
   switch (blockchain) {
     case BitcoinBlockchain:
@@ -35,7 +35,7 @@ const getBlockchainAdopter = (config) => {
     case EthereumBlockchain:
       return new Adapter.Ethereum(toAddress, clientNode, zValue)
     case TokenEthereumBlockchain:
-      return new Adapter.TokenETH(toAddress, clientNode, zValue, contractAddress)
+      return new Adapter.TokenETH(toAddress, clientNode, zValue, contractAddress, abi)
     default:
       return undefined
   }

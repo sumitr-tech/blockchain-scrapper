@@ -71,7 +71,7 @@ class Ethereum {
   }
 
   getNonce (fromAddress) {
-    let count = this.web3.eth.getTransactionCount(fromAddress)
+    const count = this.web3.eth.getTransactionCount(fromAddress)
     return (this.web3.toHex(count))
   };
 
