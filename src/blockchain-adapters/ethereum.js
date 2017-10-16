@@ -48,6 +48,11 @@ class Ethereum {
     value = this.web3.fromWei(value, 'ether')
     value = new BigNumber(value).minus(estimateEthersForGas)
 
+    if (value.isNeg()) {
+      callback('EstimateEthersForGas is bigger than actual value', null)
+      return
+    }
+
     const rawTx = {
       from: fromAccount,
       nonce: this.getNonce(fromAccount),
@@ -79,12 +84,12 @@ class Ethereum {
   sendFundsFromAccounts (accounts) {
     const self = this
     _.forEach(accounts, (account) => {
-      console.log('Running transfer for account: ', account.walletAddress)
       self.getBalance(account.walletAddress, (error, balance) => {
         if (error) {
           console.log('Error in Getting Balance: ', error)
         } else {
-          if (balance > 0) {
+          const balanceInEther = this.web3.fromWei(balance, 'ether')
+          if (parseFloat(balanceInEther.toString(10)) > 0.000001) {
             self.transferAmount(account.walletAddress, account.privateKeyEncrypted.substr(2), balance, (error, txHash) => {
               if (error) {
                 console.log('Error in Transfer Amount: ', error)
